@@ -38,7 +38,7 @@ setup(
     keywords = 'prometheus monitoring temperature sensor temper',
     packages = ['temper_exporter'],
     install_requires = [
-        'prometheus_client==0.0.20',
+        'prometheus_client==0.3.0',
         'pyudev',
         'setuptools',
     ],
