@@ -5,6 +5,7 @@ import pyudev
 
 from temper_exporter import temper
 from temper_exporter.exporter import Collector
+from prometheus_client.samples import Sample
 
 def test_non_temper_device():
     d = mock.create_autospec(pyudev.Device, action=None)
@@ -30,10 +31,10 @@ def test_collection():
     fams = list(c.collect())
     assert fams[0].name == 'temper_temperature_celsius'
     assert fams[0].type == 'gauge'
-    assert fams[0].samples == [('temper_temperature_celsius', {'name': 'foo', 'phy': ':phy:', 'version': 'VERSIONSTRING___'}, 22)]
+    assert fams[0].samples == [Sample(name='temper_temperature_celsius', labels={'name': 'foo', 'phy': ':phy:', 'version': 'VERSIONSTRING___'}, value=22, timestamp=None, exemplar=None)]
     assert fams[1].name == 'temper_humidity_rh'
     assert fams[1].type == 'gauge'
-    assert fams[1].samples == [('temper_humidity_rh', {'name': 'bar', 'phy': ':phy:', 'version': 'VERSIONSTRING___'}, 45)]
+    assert fams[1].samples == [Sample(name='temper_humidity_rh', labels={'name': 'bar', 'phy': ':phy:', 'version': 'VERSIONSTRING___'}, value=45, timestamp=None, exemplar=None)]
 
     assert c.healthy()
 
