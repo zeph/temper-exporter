@@ -136,6 +136,41 @@ class temper2(usb_temper, metaclass=matcher):
         yield 'temp', 'internal', tempi * 125 / 32000
         yield 'temp', 'external', tempe * 125 / 32000
 
+class temper3(usb_temper, metaclass=matcher):
+    @classmethod
+    def match(cls, udev_device):
+        return cls.match_interface(udev_device, lambda i: i.get(b'MODALIAS') == 'usb:v413Dp2107d0000dc00dsc00dp00ic03isc01ip01in00')
+
+    def read_calibration(self):
+        correction, wtf = self.send(cmd_get_calibration, '>bb')
+        return correction/16
+
+    def read_id(self):
+        id_ = self.send(cmd_read_sensor_id, '>b')
+        return id_ & 0xf >> 1
+
+    def read_sensor(self):
+        tempi, tempe = self.send(cmd_read_temper, '>hh')
+        yield 'temp', 'internal', tempi * 125 / 32000
+        yield 'temp', 'external', tempe * 125 / 32000
+
+class temper3hum(usb_temper, metaclass=matcher):
+    @classmethod
+    def match(cls, udev_device):
+        return cls.match_interface(udev_device, lambda i: i.get(b'MODALIAS') == 'usb:v413Dp2107d0000dc00dsc00dp00ic03isc01ip02in01')
+
+    def read_calibration(self):
+        correction, wtf, correction2, wtf2 = self.send(cmd_get_calibration, '>bbbb')
+        return correction/16, correction2/16
+
+    def read_sensor(self):
+        temp, rh = self.send(cmd_read_temper, '>hh')
+        temp_c = temp/100 - 39.7
+        rh_pc = -2.0468 + 0.0367 * rh - 1.5955e-6 * rh * rh
+        rh_pc += (temp_c - 25) * (0.01 + 0.00008 * rh)
+        yield 'temp', '', temp_c
+        yield 'humid', '', min(max(rh_pc, 0.0), 100.0)
+
 class temper2hum(usb_temper, metaclass=matcher):
     @classmethod
     def match(cls, udev_device):
