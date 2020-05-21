@@ -20,9 +20,9 @@ fi
 DESC="Prometheus exporter for TEMPerX"
 DAEMON=/usr/bin/temper-exporter
 NAME=prometheus-temper-exporter
-USER=prometheus
-PIDFILE=/var/run/prometheus/prometheus-temper-exporter.pid
-LOGFILE=/var/log/prometheus/prometheus-temper-exporter.log
+USER=_temper-exporter
+PIDFILE=/var/run/temper/prometheus-temper-exporter.pid
+LOGFILE=/var/log/temper/prometheus-temper-exporter.log
 
 ARGS=""
 [ -r /etc/default/$NAME ] && . /etc/default/$NAME
@@ -33,6 +33,7 @@ HELPER_ARGS="--name=$NAME --output=$LOGFILE --pidfile=$PIDFILE --user=$USER"
 do_start_prepare()
 {
     mkdir -p `dirname $PIDFILE` || true
+    mkdir -p `dirname $LOGFILE` || true
     chown -R $USER: `dirname $LOGFILE`
     chown -R $USER: `dirname $PIDFILE`
 }
