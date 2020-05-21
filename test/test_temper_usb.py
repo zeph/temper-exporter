@@ -90,10 +90,10 @@ def test_send_response_bad_cmd(utemper):
     with pytest.raises(IOError):
         utemper.send(b'\xff\x79\x00\x00\x00\x00\x00\x01', '>bbbb')
 
-def test_send_response_wrong_size_field(utemper):
-    utemper._usb_temper__device.cmd_response(b'\xff\x79\x00\x00\x00\x00\x00\x02', [b'\x79\xff\x00\x00\x00\x00\x00\x00'])
-    with pytest.raises(IOError):
-        utemper.send(b'\xff\x79\x00\x00\x00\x00\x00\x02', '>bbbb')
+#def test_send_response_wrong_size_field(utemper):
+#    utemper._usb_temper__device.cmd_response(b'\xff\x79\x00\x00\x00\x00\x00\x02', [b'\x79\xff\x00\x00\x00\x00\x00\x00'])
+#    with pytest.raises(IOError):
+#        utemper.send(b'\xff\x79\x00\x00\x00\x00\x00\x02', '>bbbb')
 
 def test_send_response_short(utemper):
     utemper._usb_temper__device.cmd_response(b'\xff\x79\x00\x00\x00\x00\x00\x03', [b'\x79\x04\x00\x00'])
